@@ -45,7 +45,8 @@ export default class TodoRepository {
 
   updateTodoItem = async (
     todoItem: TodoUpdate,
-    todoId: string
+    todoId: string,
+    userId: string
   ): Promise<void> => {
     const expression = generateUpdateQuery(todoItem)
 
@@ -53,7 +54,7 @@ export default class TodoRepository {
       // Key, Table, etc..
       TableName: this.todosTable,
       Key: {
-        userId: '12345',
+        userId: userId,
         todoId: todoId
       },
       ...expression
@@ -62,12 +63,12 @@ export default class TodoRepository {
     await this.docClient.update(params).promise()
   }
 
-  deleteTodoItem = async (todoId: string): Promise<void> => {
+  deleteTodoItem = async (todoId: string, userId: string): Promise<void> => {
     const params = {
       // Key, Table, etc..
       TableName: this.todosTable,
       Key: {
-        userId: '12345',
+        userId: userId,
         todoId: todoId
       },
       ConditionExpression: 'todoId = :todoId',

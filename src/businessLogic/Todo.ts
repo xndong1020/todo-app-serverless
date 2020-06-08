@@ -37,18 +37,25 @@ export const createTodo = async (
 
 export const updateTodo = async (
   updateTodoRequest: UpdateTodoRequest,
-  todoId: string
+  todoId: string,
+  jwtToken: string
 ): Promise<void> => {
+  const userId = parseUserId(jwtToken)
   await todoRepo.updateTodoItem(
     {
       name: updateTodoRequest.name,
       dueDate: updateTodoRequest.dueDate,
       done: updateTodoRequest.done
     },
-    todoId
+    todoId,
+    userId
   )
 }
 
-export const deleteTodo = async (todoId: string): Promise<void> => {
-  await todoRepo.deleteTodoItem(todoId)
+export const deleteTodo = async (
+  todoId: string,
+  jwtToken: string
+): Promise<void> => {
+  const userId = parseUserId(jwtToken)
+  await todoRepo.deleteTodoItem(todoId, userId)
 }
