@@ -9,7 +9,6 @@ import { getAllTodoItems } from '../../businessLogic/Todo'
 
 import { parseToken } from '../../auth/utils'
 
-
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // TODO: Get all TODO items for a current user
@@ -18,7 +17,7 @@ export const handler = middy(
 
     return {
       statusCode: 200,
-      body: JSON.stringify(items)
+      body: JSON.stringify({ items })
     }
   }
 )
