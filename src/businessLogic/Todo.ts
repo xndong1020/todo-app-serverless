@@ -9,6 +9,8 @@ import { parseUserId } from '../auth/utils'
 
 const todoRepo = new TodoRepository()
 
+const bucketName = process.env.ATTACHMENTS_S3_BUCKET
+
 export const getAllTodoItems = async (
   jwtToken: string
 ): Promise<TodoItem[]> => {
@@ -31,7 +33,8 @@ export const createTodo = async (
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
     done: false,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    attachmentUrl: ''
   })
 }
 
@@ -50,6 +53,16 @@ export const updateTodo = async (
     todoId,
     userId
   )
+}
+
+export const updateTodoAttachmentUrl = async (
+  todoId: string,
+  imageId: string,
+  jwtToken: string
+): Promise<void> => {
+  const userId = parseUserId(jwtToken)
+  const attachmentUrl = `https://${bucketName}.s3.amazonaws.com/${imageId}`
+  await todoRepo.updateTodoAttachmentUrl(attachmentUrl, todoId, userId)
 }
 
 export const deleteTodo = async (

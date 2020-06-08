@@ -63,6 +63,26 @@ export default class TodoRepository {
     await this.docClient.update(params).promise()
   }
 
+  updateTodoAttachmentUrl = async (
+    attachmentUrl: string,
+    todoId: string,
+    userId: string
+  ): Promise<void> => {
+    const params = {
+      TableName: this.todosTable,
+      Key: {
+        userId: userId,
+        todoId: todoId
+      },
+      UpdateExpression: 'set attachmentUrl = :attachmentUrl',
+      ExpressionAttributeValues: {
+        ':attachmentUrl': attachmentUrl
+      }
+    }
+
+    await this.docClient.update(params).promise()
+  }
+
   deleteTodoItem = async (todoId: string, userId: string): Promise<void> => {
     const params = {
       // Key, Table, etc..
