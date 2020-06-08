@@ -1,10 +1,24 @@
-// import 'source-map-support/register'
+import 'source-map-support/register'
+import * as middy from 'middy'
+import { cors } from 'middy/middlewares'
 
-// import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
-// export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-//   const todoId = event.pathParameters.todoId
+import { generateUploadUrl } from '../../businessLogic/Attachment'
 
-//   // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
-//   return undefined
-// }
+export const handler = middy(
+  async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const todoId = event.pathParameters.todoId
+
+    console.log('todoId', todoId)
+
+    // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
+    const uploadUrl = await generateUploadUrl(todoId)
+
+    return {
+      statusCode: 201,
+      body: uploadUrl
+    }
+  }
+)
+handler.use(cors())

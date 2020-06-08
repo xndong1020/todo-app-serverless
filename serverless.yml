@@ -18,6 +18,7 @@ provider:
     TODOS_TABLE: TodoApp-Todos-${self:provider.stage}
     ATTACHMENTS_S3_BUCKET: todo-app-attachments-${self:provider.stage}
     USER_ID_INDEX: UserIdIndex
+    IMAGES_SIGNED_URL_EXPIRATION: 60 * 60 * 5 # 5 mins
     # AUTH0_SECRET_ID: TodoAppAuth0Secret-\${self:provider.stage}
     # AUTH0_SECRET_FIELD: TodoAppAuth0Secret
 
@@ -101,12 +102,12 @@ functions:
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   # TODO: Configure this function
-  # GenerateUploadUrl:
-  #   handler: src/lambda/http/generateUploadUrl.handler
-  #   events:
-  #     - http:
-  #         method: post
-  #         path: todos/{todoId}/attachment
+  GenerateUploadUrl:
+    handler: src/lambda/http/generateUploadUrl.handler
+    events:
+      - http:
+          method: post
+          path: todos/{todoId}/attachment
 
 resources:
   Resources:
