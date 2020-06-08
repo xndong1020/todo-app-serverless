@@ -46,7 +46,7 @@ export default class TodoRepository {
   updateTodoItem = async (
     todoItem: TodoUpdate,
     todoId: string
-  ): Promise<TodoUpdate> => {
+  ): Promise<void> => {
     const expression = generateUpdateQuery(todoItem)
 
     const params = {
@@ -60,18 +60,33 @@ export default class TodoRepository {
     }
 
     await this.docClient.update(params).promise()
+  }
 
-    return todoItem
+  deleteTodoItem = async (todoId: string): Promise<void> => {
+    const params = {
+      // Key, Table, etc..
+      TableName: this.todosTable,
+      Key: {
+        userId: '12345',
+        todoId: todoId
+      },
+      ConditionExpression: 'todoId = :todoId',
+      ExpressionAttributeValues: {
+        ':todoId': todoId
+      }
+    }
+
+    await this.docClient.delete(params).promise()
   }
 }
 
-const generateUpdateQuery = (todoItem: TodoUpdate) => {
+const generateUpdateQuery = (fields: any) => {
   let exp = {
     UpdateExpression: 'set',
     ExpressionAttributeNames: {},
     ExpressionAttributeValues: {}
   }
-  Object.entries(todoItem).forEach(([key, item]) => {
+  Object.entries(fields).forEach(([key, item]) => {
     exp.UpdateExpression += ` #${key} = :${key},`
     exp.ExpressionAttributeNames[`#${key}`] = key
     exp.ExpressionAttributeValues[`:${key}`] = item

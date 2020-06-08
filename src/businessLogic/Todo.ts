@@ -1,7 +1,6 @@
 import * as uuid from 'uuid'
 
 import TodoItem from '../models/TodoItem'
-import TodoUpdate from '../models/TodoUpdate'
 
 import TodoRepository from '../dataLayer/TodoRepository'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
@@ -41,8 +40,8 @@ export const createTodo = async (
 export const updateTodo = async (
   updateTodoRequest: UpdateTodoRequest,
   todoId: string
-): Promise<TodoUpdate> => {
-  return await todoRepo.updateTodoItem(
+): Promise<void> => {
+  await todoRepo.updateTodoItem(
     {
       name: updateTodoRequest.name,
       dueDate: updateTodoRequest.dueDate,
@@ -50,4 +49,8 @@ export const updateTodo = async (
     },
     todoId
   )
+}
+
+export const deleteTodo = async (todoId: string): Promise<void> => {
+  await todoRepo.deleteTodoItem(todoId)
 }
