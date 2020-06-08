@@ -3,14 +3,17 @@ import 'source-map-support/register'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 
-import { APIGatewayProxyResult } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
 import { getAllTodoItems } from '../../businessLogic/Todo'
 
+import { parseToken } from '../../auth/utils'
+
 export const handler = middy(
-  async (): Promise<APIGatewayProxyResult> => {
+  async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // TODO: Get all TODO items for a current user
-    const items = await getAllTodoItems('12345')
+    const token = parseToken(event.headers.Authorization)
+    const items = await getAllTodoItems(token)
 
     return {
       statusCode: 200,

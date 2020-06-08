@@ -5,17 +5,16 @@ import TodoItem from '../models/TodoItem'
 import TodoRepository from '../dataLayer/TodoRepository'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
-// import { parseUserId } from '../auth/utils'
+import { parseUserId } from '../auth/utils'
 
 const todoRepo = new TodoRepository()
 
 export const getAllTodoItems = async (
   jwtToken: string
 ): Promise<TodoItem[]> => {
-  // const userId = parseUserId(jwtToken)
-  const userId = jwtToken
+  const userId = parseUserId(jwtToken)
   console.log('Todo business Login: ', userId)
-  return todoRepo.getAllTodoItems(userId)
+  return todoRepo.getAllTodoItems(userId) || []
 }
 
 export const createTodo = async (
@@ -24,8 +23,7 @@ export const createTodo = async (
 ): Promise<TodoItem> => {
   const todoId = uuid.v4()
   console.log('Todo business Login: ', jwtToken)
-  // const userId = parseUserId(jwtToken)
-  const userId = '12345'
+  const userId = parseUserId(jwtToken)
 
   return await todoRepo.createTodoItem({
     todoId,
