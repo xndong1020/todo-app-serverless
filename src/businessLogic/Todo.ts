@@ -1,8 +1,11 @@
 import * as uuid from 'uuid'
 
 import TodoItem from '../models/TodoItem'
+import TodoUpdate from '../models/TodoUpdate'
+
 import TodoRepository from '../dataLayer/TodoRepository'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 // import { parseUserId } from '../auth/utils'
 
 const todoRepo = new TodoRepository()
@@ -33,4 +36,18 @@ export const createTodo = async (
     done: false,
     createdAt: new Date().toISOString()
   })
+}
+
+export const updateTodo = async (
+  updateTodoRequest: UpdateTodoRequest,
+  todoId: string
+): Promise<TodoUpdate> => {
+  return await todoRepo.updateTodoItem(
+    {
+      name: updateTodoRequest.name,
+      dueDate: updateTodoRequest.dueDate,
+      done: updateTodoRequest.done
+    },
+    todoId
+  )
 }

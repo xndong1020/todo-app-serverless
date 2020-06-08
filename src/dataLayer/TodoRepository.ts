@@ -5,6 +5,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 const XAWS = AWSXRay.captureAWS(AWS)
 
 import TodoItem from '../models/TodoItem'
+import TodoUpdate from '../models/TodoUpdate'
 
 export default class TodoRepository {
   constructor(
@@ -41,6 +42,42 @@ export default class TodoRepository {
 
     return todoItem
   }
+
+  updateTodoItem = async (
+    todoItem: TodoUpdate,
+    todoId: string
+  ): Promise<TodoUpdate> => {
+    const expression = generateUpdateQuery(todoItem)
+
+    const params = {
+      // Key, Table, etc..
+      TableName: this.todosTable,
+      Key: {
+        userId: '12345',
+        todoId: todoId
+      },
+      ...expression
+    }
+
+    await this.docClient.update(params).promise()
+
+    return todoItem
+  }
+}
+
+const generateUpdateQuery = (todoItem: TodoUpdate) => {
+  let exp = {
+    UpdateExpression: 'set',
+    ExpressionAttributeNames: {},
+    ExpressionAttributeValues: {}
+  }
+  Object.entries(todoItem).forEach(([key, item]) => {
+    exp.UpdateExpression += ` #${key} = :${key},`
+    exp.ExpressionAttributeNames[`#${key}`] = key
+    exp.ExpressionAttributeValues[`:${key}`] = item
+  })
+  exp.UpdateExpression = exp.UpdateExpression.slice(0, -1)
+  return exp
 }
 
 const createDynamoDBClient = () => {
