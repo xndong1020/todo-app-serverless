@@ -9,15 +9,21 @@ import TodoItem from '../models/TodoItem'
 export default class TodoRepository {
   constructor(
     private readonly docClient: DocumentClient = createDynamoDBClient(),
-    private readonly todosTable = process.env.TODOS_TABLE
+    private readonly todosTable = process.env.TODOS_TABLE,
+    private readonly userIdIndex = process.env.USER_ID_INDEX
   ) {}
 
-  async getAllTodoItems(): Promise<TodoItem[]> {
+  getAllTodoItems = async (userId: string): Promise<TodoItem[]> => {
     console.log('Getting all todo items')
 
     const result = await this.docClient
-      .scan({
-        TableName: this.todosTable
+      .query({
+        TableName: this.todosTable,
+        IndexName: this.userIdIndex,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: {
+          ':userId': userId
+        }
       })
       .promise()
 
@@ -25,7 +31,7 @@ export default class TodoRepository {
     return items as TodoItem[]
   }
 
-  async createTodoItem(todoItem: TodoItem): Promise<TodoItem> {
+  createTodoItem = async (todoItem: TodoItem): Promise<TodoItem> => {
     await this.docClient
       .put({
         TableName: this.todosTable,
@@ -37,7 +43,7 @@ export default class TodoRepository {
   }
 }
 
-function createDynamoDBClient() {
+const createDynamoDBClient = () => {
   if (process.env.IS_OFFLINE) {
     console.log('Creating a local DynamoDB instance')
     return new XAWS.DynamoDB.DocumentClient({

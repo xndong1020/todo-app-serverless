@@ -1,6 +1,6 @@
 #### Resources Required:
 
-1. Dynamodb Table `Todost-{Stage}`.
+1. Dynamodb Table `TodoApp-Todos-{Stage}`.
 
 Schema:
 
@@ -16,7 +16,9 @@ Schema:
 }
 ```
 
-2. S3 bucket for storing attachment `Attachment-{Stage}`
+2. S3 bucket for storing attachment `todo-app-attachments-{Stage}`
+
+and a bucket policy to allow public get
 
 3. GatewayResponseDefault4XX
 
