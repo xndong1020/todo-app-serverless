@@ -6,16 +6,18 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 import TodoItem from '../models/TodoItem'
 import TodoUpdate from '../models/TodoUpdate'
+import { createLogger } from '../utils/logger'
 
 export default class TodoRepository {
   constructor(
     private readonly docClient: DocumentClient = createDynamoDBClient(),
+    private readonly logger = createLogger('Todos Repository'),
     private readonly todosTable = process.env.TODOS_TABLE,
     private readonly userIdIndex = process.env.USER_ID_INDEX
   ) {}
 
   getAllTodoItems = async (userId: string): Promise<TodoItem[]> => {
-    console.log('Getting all todo items')
+    this.logger.info('Getting all todo items')
 
     const result = await this.docClient
       .query({
@@ -118,7 +120,7 @@ const generateUpdateQuery = (fields: any) => {
 
 const createDynamoDBClient = () => {
   if (process.env.IS_OFFLINE) {
-    console.log('Creating a local DynamoDB instance')
+    this.logger.info('Creating a local DynamoDB instance')
     return new XAWS.DynamoDB.DocumentClient({
       region: 'localhost',
       endpoint: 'http://localhost:8000'

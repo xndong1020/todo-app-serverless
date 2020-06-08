@@ -7,6 +7,10 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import { parseUserId } from '../auth/utils'
 
+import { createLogger } from '../utils/logger'
+
+const logger = createLogger('Todo businessLogic')
+
 const todoRepo = new TodoRepository()
 
 const bucketName = process.env.ATTACHMENTS_S3_BUCKET
@@ -15,7 +19,7 @@ export const getAllTodoItems = async (
   jwtToken: string
 ): Promise<TodoItem[]> => {
   const userId = parseUserId(jwtToken)
-  console.log('Todo business Login: ', userId)
+  logger.info('Todo business Login: ', userId)
   return todoRepo.getAllTodoItems(userId) || []
 }
 
@@ -24,7 +28,7 @@ export const createTodo = async (
   jwtToken: string
 ): Promise<TodoItem> => {
   const todoId = uuid.v4()
-  console.log('Todo business Login: ', jwtToken)
+  logger.info('Todo business Login: ', jwtToken)
   const userId = parseUserId(jwtToken)
 
   return await todoRepo.createTodoItem({
